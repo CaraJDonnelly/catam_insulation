@@ -6,7 +6,7 @@ unset key
 set tic scale 0
 
 # Color runs from red(hot) to blue(cold)
-set palette defined (0 "blue", 1 "red")
+set palette defined (0 "blue", 0.5 "green", 1 "red")
 set cbrange [0:1]
 set cblabel "Temperature"
 set xlabel 'x'

@@ -1,4 +1,6 @@
 #include <cfloat>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <vector>
 
@@ -19,19 +21,23 @@ InsulatedBox::InsulatedBox(int resolution, double convergence_tolerance,
       position_[i][j] = std::make_pair(i*grid_width_, j*grid_width_);
     }
   }
-  // Initialize temperature_ with zeroes everywhere.  DoTimestep takes care
-  // of boundary conditions.
+  // Initialize temperature_ with random noise everywhere.  DoTimestep takes
+  // care of boundary conditions.
   temperature_.resize(resolution_);
+  std::srand(std::time(0));
   for (int i = 0; i < resolution_; ++i) {
     temperature_[i].resize(resolution_);
+    for (int j = 0; j < resolution_; ++j) {
+      temperature_[i][j] = 1.0*(std::rand()%100)/100;
+    }
   }
 }
 
 InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
-  if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
-  if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
   if (j == 0) return InsulatedBox::UPPER_BOUNDARY;
   if (j == resolution_ - 1) return InsulatedBox::LOWER_BOUNDARY;
+  if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
+  if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
   return InsulatedBox::FREE_AIR;
 }
 
@@ -51,7 +57,7 @@ void InsulatedBox::DoTimestep() {
           temperature_[i][j] = 1.0;
           break;
         case HEATED_COLD_BOUNDARY:
-          temperature_[i][j] = 0.0;
+          temperature_[i][j] = 1.0;
           break;
         // dT/dy = 0.
         case UPPER_BOUNDARY:
