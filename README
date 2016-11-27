@@ -15,3 +15,15 @@ Obviously T = t_0 (1 - x/L) + t_1 (x/L)
 Numerical problem:
 
 Code that up using successive over-relaxation.  We don't consider state changes so set t_0 = 1, t_1 = 0, and L = 1.
+
+On the upper and lower boundaries we have dT/dy = 0.  On the upper boundary we might take the right hand derivative
+
+(t_0 - t_1)/h = 0, or t_0 = t_1.
+
+In free space we wish to relax towards
+
+del^2 T = 0
+
+i.e. we have at fixed point (x, y)
+
+d^T/dx^2 + d^T/dy^2 = T_d
