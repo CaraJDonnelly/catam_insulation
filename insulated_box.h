@@ -1,3 +1,4 @@
+#include <memory>
 #include <vector>
 
 namespace catam {
@@ -37,8 +38,9 @@ class InsulatedBox {
     //   verbose_log: whether or not to log the grid after each
     //     timestep.
     // Sets up a valid initial condition for the temperature.
-    InsulatedBox(int resolution, double convergence_tolerance,
-        double relaxation_constant, bool verbose_log);
+    InsulatedBox(double convergence_tolerance,
+        double relaxation_constant, bool verbose_log,
+        std::unique_ptr<std::vector<std::vector<char>>> walls);
 
     // If is_converged_ is true, this function does nothing.
     //
@@ -86,6 +88,8 @@ class InsulatedBox {
     std::vector<std::vector<std::pair<double, double>>> position_;
     // The array that holds the temperature.
     std::vector<std::vector<double>> temperature_;
+    // The array holding the position of the walls.  User supplied.
+    std::unique_ptr<std::vector<std::vector<char>>> walls_;
 };
 
 }  // namespace catam

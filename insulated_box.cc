@@ -10,10 +10,12 @@
 
 namespace catam {
 
-InsulatedBox::InsulatedBox(int resolution, double convergence_tolerance,
-  double relaxation_constant, bool verbose_log)
-    : resolution_(resolution), convergence_tolerance_(convergence_tolerance),
-      relaxation_constant_(relaxation_constant), verbose_log_(verbose_log) {
+InsulatedBox::InsulatedBox(double convergence_tolerance,
+  double relaxation_constant, bool verbose_log,
+  std::unique_ptr<std::vector<std::vector<char>>> walls)
+    : resolution_(walls->size()), convergence_tolerance_(convergence_tolerance),
+      relaxation_constant_(relaxation_constant), verbose_log_(verbose_log),
+      walls_(std::move(walls)) {
   grid_width_ = 1.0/resolution_;
   // Initialize position_array to be pairs of (x, y) co-ordinates.
   position_.resize(resolution_);
@@ -36,46 +38,27 @@ InsulatedBox::InsulatedBox(int resolution, double convergence_tolerance,
 }
 
 InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
-  if (j == 0) return InsulatedBox::LOWER_BOUNDARY;
-  if (j == resolution_ - 1) return InsulatedBox::UPPER_BOUNDARY;
-  if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
-  if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
-  // Now add a wall down the middle, thickness 1.
-  // Place the corners around a hole in the wall.
-  if (i == resolution_/2 - 1) {
-    if (j == resolution_/2 - 1) {
-      return InsulatedBox::LOWER_RIGHT_CORNER;
-    } else if (j == resolution_/2 + 1) {
-      return InsulatedBox::UPPER_RIGHT_CORNER;
-    } else if (j == resolution_/2) {
-      return InsulatedBox::FREE_AIR;
-    } else {
-      return InsulatedBox::RIGHT_BOUNDARY;
-    }
-  }
-  if (i == resolution_/2 + 1) {
-    if (j == resolution_/2 - 1) {
-      return InsulatedBox::LOWER_LEFT_CORNER;
-    } else if (j == resolution_/2 + 1) {
-      return InsulatedBox::UPPER_LEFT_CORNER;
-    } else if (j == resolution_/2) {
-      return InsulatedBox::FREE_AIR;
-    } else {
-      return InsulatedBox::LEFT_BOUNDARY;
-    }
-  }
-  if ((i > resolution_/2 - 1) && (i < resolution_/2 + 1)) {
-    if (j == resolution_/2) {
-      return InsulatedBox::FREE_AIR;
-    } else if (j == resolution_/2 - 1) {
-      return InsulatedBox::LOWER_BOUNDARY;
-    } else if (j == resolution_/2 + 1) {
+  char wall_code = (*walls_)[i][j];
+  switch (wall_code) {
+    case 'U':
       return InsulatedBox::UPPER_BOUNDARY;
-    } else {
-      return InsulatedBox::INSIDE_INSULATION;
-    }
-  }
-  return InsulatedBox::FREE_AIR;
+      break;
+    case 'L':
+      return InsulatedBox::LOWER_BOUNDARY;
+      break;
+    case 'H':
+      return InsulatedBox::HEATED_HOT_BOUNDARY;
+      break;
+    case 'C':
+      return InsulatedBox::HEATED_COLD_BOUNDARY;
+      break;
+    case ' ':
+      return InsulatedBox::FREE_AIR;
+      break;
+    default:
+      std::cerr << "Unknown wall type: " << wall_code;
+      exit(0);
+  };
 }
 
 void InsulatedBox::DoTimestep() {
