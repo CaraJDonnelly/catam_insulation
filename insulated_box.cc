@@ -55,7 +55,7 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
     case 'I':
       return InsulatedBox::INSIDE_INSULATION;
       break;
-    case '^':
+    case '"':
       return InsulatedBox::RIGHT_BOUNDARY;
       break;
     case 'v':

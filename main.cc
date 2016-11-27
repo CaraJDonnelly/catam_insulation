@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
   ReadWalls(walls.get());
   double resolution = walls->size();
   double safe_relaxation_constant = 0.25/resolution/resolution;
-  catam::InsulatedBox box(/*convergence_tolerance=*/0.0001,
+  catam::InsulatedBox box(/*convergence_tolerance=*/0.000001,
       /*relaxation_constant=*/safe_relaxation_constant, /*verbose_logging=*/true,
       std::move(walls));
   while(!box.IsConverged()) {
