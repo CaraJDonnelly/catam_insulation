@@ -52,6 +52,15 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
     case 'C':
       return InsulatedBox::HEATED_COLD_BOUNDARY;
       break;
+    case 'I':
+      return InsulatedBox::INSIDE_INSULATION;
+      break;
+    case '^':
+      return InsulatedBox::RIGHT_BOUNDARY;
+      break;
+    case 'v':
+      return InsulatedBox::LEFT_BOUNDARY;
+      break;
     case ' ':
       return InsulatedBox::FREE_AIR;
       break;
