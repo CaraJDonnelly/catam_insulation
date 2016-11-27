@@ -17,3 +17,10 @@ set yrange [0.0:1.0]
 
 set view map
 splot 'heatmap.dat' u 1:2:3 with image
+
+set term png
+set output "heatmap.png"
+replot
+set output
+set term x11
+replot
