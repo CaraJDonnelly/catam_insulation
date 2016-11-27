@@ -65,7 +65,7 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
       return InsulatedBox::FREE_AIR;
       break;
     case '/':
-      return InsulatedBox::LOWER_RIGHT_CORNER;
+      return InsulatedBox::UPPER_RIGHT_CORNER;
       break;
     case '\\':
       return InsulatedBox::LOWER_RIGHT_CORNER;
@@ -169,9 +169,19 @@ bool InsulatedBox::IsConverged() {
   return is_converged_;
 }
 
+double InsulatedBox::GetHeatFluxPerUnitLength() {
+  double integral_dy_dT_by_dx = 0.0;
+  int i = resolution_ - 2;
+  for (int j = 0; j < resolution_; ++j) {
+    integral_dy_dT_by_dx += (temperature_[i+1][j] - temperature_[i-1][j])/(2*grid_width_);
+  }
+  return integral_dy_dT_by_dx/resolution_;
+}
+
 void InsulatedBox::Log() {
   std::cout << "# Iteration " << iteration_
             << ", is_converged_ " << is_converged_ << std::endl;
+  std::cout << "# Heat flux: " << GetHeatFluxPerUnitLength() << std::endl;
   for (int i = 0; i < resolution_; ++i) {
     for (int j = 0; j < resolution_; ++j) {
       std::cout << position_[i][j].first << " "

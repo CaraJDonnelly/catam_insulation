@@ -58,6 +58,9 @@ class InsulatedBox {
     // Getter for is_converged_.
     bool IsConverged();
 
+    // Does the integral over y of dT/dx to get the heat flux across the box per unit length.
+    double GetHeatFluxPerUnitLength();
+
     // The function which defines the shape of the box and where its
     // inner walls are.
     BoundaryType GetBoundaryType(int i, int j);
