@@ -34,8 +34,8 @@ InsulatedBox::InsulatedBox(int resolution, double convergence_tolerance,
 }
 
 InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
-  if (j == 0) return InsulatedBox::UPPER_BOUNDARY;
-  if (j == resolution_ - 1) return InsulatedBox::LOWER_BOUNDARY;
+  if (j == 0) return InsulatedBox::LOWER_BOUNDARY;
+  if (j == resolution_ - 1) return InsulatedBox::UPPER_BOUNDARY;
   if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
   if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
   return InsulatedBox::FREE_AIR;
@@ -50,6 +50,7 @@ void InsulatedBox::DoTimestep() {
   ++iteration_;
   double delsq_T;
   double max_abs_delsq_T = DBL_MIN;
+  double max_temperature_delta = DBL_MIN;
   for (int i = 0; i < resolution_; ++i) {
     for (int j = 0; j < resolution_; ++j) {
       switch (GetBoundaryType(i, j)) {
@@ -80,7 +81,8 @@ void InsulatedBox::DoTimestep() {
   }
   if (verbose_log_) {
     std::cerr << "#" << iteration_
-              << " Max abs del^2 T: " << max_abs_delsq_T << std::endl;
+              << " convergence percentage: "
+              << max_abs_delsq_T/convergence_tolerance_ << std::endl;
   }
   if (max_abs_delsq_T < convergence_tolerance_) {
     is_converged_ = true;
