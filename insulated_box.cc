@@ -60,7 +60,7 @@ void InsulatedBox::DoTimestep() {
           temperature_[i][j] = 1.0;
           break;
         case HEATED_COLD_BOUNDARY:
-          temperature_[i][j] = 1.0;
+          temperature_[i][j] = 0.0;
           break;
         // dT/dy = 0.
         case UPPER_BOUNDARY:
