@@ -1,7 +1,9 @@
 #include <cfloat>
+#include <cmath>
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 
 #include "insulated_box.h"
@@ -73,7 +75,7 @@ void InsulatedBox::DoTimestep() {
               (temperature_[i - 1][j] - 2*temperature_[i][j] + temperature_[i + 1][j])
               + (temperature_[i][j-1] - 2*temperature_[i][j] + temperature_[i][j+1])
               )/(grid_width_*grid_width_);
-          if (abs(delsq_T) > max_abs_delsq_T) max_abs_delsq_T = abs(delsq_T);
+          if (std::abs(delsq_T) > max_abs_delsq_T) max_abs_delsq_T = std::abs(delsq_T);
           temperature_[i][j] = (temperature_[i][j]
               + relaxation_constant_*delsq_T);
       };
@@ -82,6 +84,7 @@ void InsulatedBox::DoTimestep() {
   if (verbose_log_) {
     std::cerr << "#" << iteration_
               << " convergence percentage: "
+              << std::setprecision(9)
               << max_abs_delsq_T/convergence_tolerance_ << std::endl;
   }
   if (max_abs_delsq_T < convergence_tolerance_) {
