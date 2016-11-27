@@ -40,6 +40,11 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
   if (j == resolution_ - 1) return InsulatedBox::UPPER_BOUNDARY;
   if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
   if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
+  // Now add a wall down the middle, thickness 1.
+  if (i == resolution_/2 - 1) return InsulatedBox::RIGHT_BOUNDARY;
+  if (i == resolution_/2 + 1) return InsulatedBox::LEFT_BOUNDARY;
+  if ((i > resolution_/2 - 1) && (i < resolution_/2 + 1))
+    return InsulatedBox::INSIDE_INSULATION;
   return InsulatedBox::FREE_AIR;
 }
 
@@ -69,6 +74,17 @@ void InsulatedBox::DoTimestep() {
         // dT/dy = 0.
         case LOWER_BOUNDARY:
           temperature_[i][j] = temperature_[i][j+1];
+          break;
+        // dT/dx = 0.
+        case LEFT_BOUNDARY:
+          temperature_[i][j] = temperature_[i+1][j];
+          break;
+        // dT/dx = 0.
+        case RIGHT_BOUNDARY:
+          temperature_[i][j] = temperature_[i-1][j];
+          break;
+        case INSIDE_INSULATION:
+          temperature_[i][j] = -DBL_MAX;
           break;
         case FREE_AIR:
           delsq_T = ( 

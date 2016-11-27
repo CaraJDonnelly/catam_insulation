@@ -16,7 +16,8 @@ set xrange [0.0:1.0]
 set yrange [0.0:1.0]
 
 set view map
-splot 'heatmap.dat' u 1:2:3 with image
+# Insulation is set to -DBL_MAX, so we can plot that as white space.
+splot 'heatmap.dat' u 1:2:($3>=-1?$3:NaN) with image
 
 set term png
 set output "heatmap.png"
