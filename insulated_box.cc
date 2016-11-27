@@ -64,6 +64,18 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
     case ' ':
       return InsulatedBox::FREE_AIR;
       break;
+    case '/':
+      return InsulatedBox::LOWER_RIGHT_CORNER;
+      break;
+    case '\\':
+      return InsulatedBox::LOWER_RIGHT_CORNER;
+      break;
+    case '7':
+      return InsulatedBox::LOWER_LEFT_CORNER;
+      break;
+    case '6':
+      return InsulatedBox::UPPER_LEFT_CORNER;
+      break;
     default:
       std::cerr << "Unknown wall type: " << wall_code;
       exit(0);
