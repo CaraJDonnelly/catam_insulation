@@ -27,3 +27,13 @@ del^2 T = 0
 i.e. we have at fixed point (x, y)
 
 d^T/dx^2 + d^T/dy^2 = T_d
+
+CORNER DERIVATIVES:
+
+On a convex corner the edges are bevelled to point at 45 degrees.
+
+E.g. bottom left corner boundary conditions are (1.0/sqrt(2.0))*(dT/dx + dT/dy) = 0
+
+and by taking a right-derivative on both of these
+
+T_{i,j} = 0.5*(T_{i+1,j} + T_{i,j+1})

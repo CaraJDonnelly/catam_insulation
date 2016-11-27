@@ -18,6 +18,11 @@ class InsulatedBox {
       // Will be kept with dT/dx = 0.0
       LEFT_BOUNDARY,
       RIGHT_BOUNDARY,
+      // Will be kept with del T . n = 0.0
+      UPPER_RIGHT_CORNER,
+      UPPER_LEFT_CORNER,
+      LOWER_RIGHT_CORNER,
+      LOWER_LEFT_CORNER,
       // Will be set to -DBL_MAX for ease of plotting.
       INSIDE_INSULATION,
       // Will relax under the diffusion equation.

@@ -41,10 +41,40 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
   if (i == 0) return InsulatedBox::HEATED_HOT_BOUNDARY;
   if (i == resolution_ - 1) return InsulatedBox::HEATED_COLD_BOUNDARY;
   // Now add a wall down the middle, thickness 1.
-  if (i == resolution_/2 - 1) return InsulatedBox::RIGHT_BOUNDARY;
-  if (i == resolution_/2 + 1) return InsulatedBox::LEFT_BOUNDARY;
-  if ((i > resolution_/2 - 1) && (i < resolution_/2 + 1))
-    return InsulatedBox::INSIDE_INSULATION;
+  // Place the corners around a hole in the wall.
+  if (i == resolution_/2 - 1) {
+    if (j == resolution_/2 - 1) {
+      return InsulatedBox::LOWER_RIGHT_CORNER;
+    } else if (j == resolution_/2 + 1) {
+      return InsulatedBox::UPPER_RIGHT_CORNER;
+    } else if (j == resolution_/2) {
+      return InsulatedBox::FREE_AIR;
+    } else {
+      return InsulatedBox::RIGHT_BOUNDARY;
+    }
+  }
+  if (i == resolution_/2 + 1) {
+    if (j == resolution_/2 - 1) {
+      return InsulatedBox::LOWER_LEFT_CORNER;
+    } else if (j == resolution_/2 + 1) {
+      return InsulatedBox::UPPER_LEFT_CORNER;
+    } else if (j == resolution_/2) {
+      return InsulatedBox::FREE_AIR;
+    } else {
+      return InsulatedBox::LEFT_BOUNDARY;
+    }
+  }
+  if ((i > resolution_/2 - 1) && (i < resolution_/2 + 1)) {
+    if (j == resolution_/2) {
+      return InsulatedBox::FREE_AIR;
+    } else if (j == resolution_/2 - 1) {
+      return InsulatedBox::LOWER_BOUNDARY;
+    } else if (j == resolution_/2 + 1) {
+      return InsulatedBox::UPPER_BOUNDARY;
+    } else {
+      return InsulatedBox::INSIDE_INSULATION;
+    }
+  }
   return InsulatedBox::FREE_AIR;
 }
 
@@ -83,9 +113,31 @@ void InsulatedBox::DoTimestep() {
         case RIGHT_BOUNDARY:
           temperature_[i][j] = temperature_[i-1][j];
           break;
+        // Convex corners.  These have del T . n = 0,
+        // where n is (1/sqrt(2)) (\pm 1, \pm 1).
+        case UPPER_RIGHT_CORNER:
+          temperature_[i][j] = 0.5*(
+            temperature_[i-1][j] + temperature_[i][j-1]);
+          break;
+        case UPPER_LEFT_CORNER:
+          temperature_[i][j] = 0.5*(
+            temperature_[i-1][j] + temperature_[i][j+1]);
+          break;
+        case LOWER_RIGHT_CORNER:
+          temperature_[i][j] = 0.5*(
+            temperature_[i+1][j] + temperature_[i][j-1]);
+          break;
+        case LOWER_LEFT_CORNER:
+          temperature_[i][j] = 0.5*(
+            temperature_[i+1][j] + temperature_[i][j+1]);
+          break;
+        // This should never be processed, so we set it to a large
+        // negative value that will disrupt our calculation visibly if
+        // it does.
         case INSIDE_INSULATION:
           temperature_[i][j] = -DBL_MAX;
           break;
+        // The diffusion equation!
         case FREE_AIR:
           delsq_T = ( 
               (temperature_[i - 1][j] - 2*temperature_[i][j] + temperature_[i + 1][j])
@@ -97,7 +149,7 @@ void InsulatedBox::DoTimestep() {
       };
     }
   }
-  if (verbose_log_) {
+  if (verbose_log_ && (iteration_ % 1000 == 0)) {
     std::cerr << "#" << iteration_
               << " convergence percentage: "
               << std::setprecision(9)
