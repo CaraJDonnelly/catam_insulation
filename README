@@ -1,0 +1,17 @@
+Do that damn catam problem better.
+
+Setup part 1:
+
+We have a LxL box, with temperature set to T = t0 at the left hand side and T = t1 at the right.  We seek the steady-state temperature i.e.
+
+del^2 T = 0
+
+The upper and lower walls are made of material that are infinitely insulating i.e. del T . n = 0 on a wall.
+
+Analytical solution:
+
+Obviously T = t_0 (1 - x/L) + t_1 (x/L)
+
+Numerical problem:
+
+Code that up using successive over-relaxation.  We don't consider state changes so set t_0 = 1, t_1 = 0, and L = 1.
