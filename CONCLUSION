@@ -1,0 +1,16 @@
+I still don't know what I was supposed to deduce from this question.
+
+I get that making the wall more porous decreases its insulative qualities.
+
+The important thing is not the amount of insulation, it's the amount heat
+will have to 'bend' to get through the holes.  More porous walls means
+the heat barely has to bend at all -- just squeeze a bit.
+
+Can't tell if this is making sense.
+
+It's very frustrating not to find a smoking gun.  I thought I had one early
+on but couldn't reproduce when I went down that alleyway.
+
+Maybe tomorrow night I'll return to that first graph, 'Heat flux against
+inverse of free space' with the periodic code, and a fixed aspect ratio,
+and see if I can reproduce my straight line.  Right now I want to sleep.
