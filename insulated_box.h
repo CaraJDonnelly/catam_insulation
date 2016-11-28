@@ -71,7 +71,8 @@ class InsulatedBox {
     // The resolution of the box.  Given the question will shortly involve
     // insulated inner sections, must be at least high enough to resolve
     // the width of an inner section.
-    int resolution_;
+    int x_resolution_;
+    int y_resolution_;
     // Synactic sugar.  The distance between two grid point.  1.0/resolution_;
     double grid_width_;
     // How many times DoTimestep has been called.  Convenience for logging.

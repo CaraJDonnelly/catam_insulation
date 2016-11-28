@@ -13,25 +13,26 @@ namespace catam {
 InsulatedBox::InsulatedBox(double convergence_tolerance,
   double relaxation_constant, bool verbose_log,
   std::unique_ptr<std::vector<std::vector<char>>> walls)
-    : resolution_(walls->size()), convergence_tolerance_(convergence_tolerance),
+    : x_resolution_(walls->size()), y_resolution_(walls->front().size()),
+      convergence_tolerance_(convergence_tolerance),
       relaxation_constant_(relaxation_constant), verbose_log_(verbose_log),
       walls_(std::move(walls)) {
-  grid_width_ = 1.0/resolution_;
+  grid_width_ = 1.0/x_resolution_;
   // Initialize position_array to be pairs of (x, y) co-ordinates.
-  position_.resize(resolution_);
-  for (int i = 0; i < resolution_; ++i) {
-    position_[i].resize(resolution_);
-    for (int j = 0; j < resolution_; ++j) {
+  position_.resize(x_resolution_);
+  for (int i = 0; i < x_resolution_; ++i) {
+    position_[i].resize(y_resolution_);
+    for (int j = 0; j < y_resolution_; ++j) {
       position_[i][j] = std::make_pair(i*grid_width_, j*grid_width_);
     }
   }
   // Initialize temperature_ with random noise everywhere.  DoTimestep takes
   // care of boundary conditions.
-  temperature_.resize(resolution_);
+  temperature_.resize(x_resolution_);
   std::srand(std::time(0));
-  for (int i = 0; i < resolution_; ++i) {
-    temperature_[i].resize(resolution_);
-    for (int j = 0; j < resolution_; ++j) {
+  for (int i = 0; i < x_resolution_; ++i) {
+    temperature_[i].resize(y_resolution_);
+    for (int j = 0; j < y_resolution_; ++j) {
       temperature_[i][j] = 1.0*(std::rand()%100)/100;
     }
   }
@@ -98,8 +99,8 @@ void InsulatedBox::DoTimestep() {
   double delsq_T;
   double max_abs_delsq_T = DBL_MIN;
   double max_temperature_delta = DBL_MIN;
-  for (int i = 0; i < resolution_; ++i) {
-    for (int j = 0; j < resolution_; ++j) {
+  for (int i = 0; i < x_resolution_; ++i) {
+    for (int j = 0; j < y_resolution_; ++j) {
       switch (GetBoundaryType(i, j)) {
         case HEATED_HOT_BOUNDARY:
           temperature_[i][j] = 1.0;
@@ -154,7 +155,7 @@ void InsulatedBox::DoTimestep() {
           temperature_[i][j] = temperature_[i][1];
           break;
         case PERIODIC_LOWER:
-          temperature_[i][j] = temperature_[i][resolution_ - 2];
+          temperature_[i][j] = temperature_[i][y_resolution_ - 2];
           break;
         // The diffusion equation!
         case FREE_AIR:
@@ -186,19 +187,19 @@ bool InsulatedBox::IsConverged() {
 
 double InsulatedBox::GetHeatFluxPerUnitLength() {
   double integral_dy_dT_by_dx = 0.0;
-  int i = resolution_ - 2;
-  for (int j = 0; j < resolution_; ++j) {
+  int i = x_resolution_ - 2;
+  for (int j = 0; j < y_resolution_; ++j) {
     integral_dy_dT_by_dx += (temperature_[i+1][j] - temperature_[i-1][j])/(2*grid_width_);
   }
-  return integral_dy_dT_by_dx/resolution_;
+  return integral_dy_dT_by_dx/y_resolution_;
 }
 
 void InsulatedBox::Log() {
   std::cout << "# Iteration " << iteration_
             << ", is_converged_ " << is_converged_ << std::endl;
   std::cout << "# Heat flux: " << GetHeatFluxPerUnitLength() << std::endl;
-  for (int i = 0; i < resolution_; ++i) {
-    for (int j = 0; j < resolution_; ++j) {
+  for (int i = 0; i < x_resolution_; ++i) {
+    for (int j = 0; j < y_resolution_; ++j) {
       std::cout << position_[i][j].first << " "
                 << position_[i][j].second << " "
                 << temperature_[i][j] << std::endl;

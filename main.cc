@@ -26,17 +26,13 @@ void ReadWalls(std::vector<std::vector<char>>* walls) {
       exit(1);
     }
     std::vector<char> new_line;
-    for (int i=0; i < line.size(); ++i) {
-      new_line.push_back(line[i]);
+    for (int j=0; j < line.size(); ++j) {
+      new_line.push_back(line[j]);
     }
     walls->push_back(new_line);
   }
-  if (num_lines != line_length) {
-    std::cerr << "Square domains only." << std::endl;
-    exit(1);
-  }
   std::cerr << "Read domain: " << std::endl;
-  for (int i = 0; i < line_length; ++i) {
+  for (int i = 0; i < num_lines; ++i) {
     for (int j = 0; j < line_length; ++j) {
       std::cerr << (*walls)[i][j];
     }
