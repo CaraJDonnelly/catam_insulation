@@ -55,6 +55,12 @@ InsulatedBox::BoundaryType InsulatedBox::GetBoundaryType(int i, int j) {
     case 'I':
       return InsulatedBox::INSIDE_INSULATION;
       break;
+    case 'P':
+      return InsulatedBox::PERIODIC_UPPER;
+      break;
+    case 'p':
+      return InsulatedBox::PERIODIC_LOWER;
+      break;
     case '"':
       return InsulatedBox::RIGHT_BOUNDARY;
       break;
@@ -140,6 +146,15 @@ void InsulatedBox::DoTimestep() {
         // it does.
         case INSIDE_INSULATION:
           temperature_[i][j] = -DBL_MAX;
+          break;
+        // Periodic upper and lower walls:
+        //   (resolution - 1) -> 1
+        //   0 -> (resolution - 1) - 1
+        case PERIODIC_UPPER:
+          temperature_[i][j] = temperature_[i][1];
+          break;
+        case PERIODIC_LOWER:
+          temperature_[i][j] = temperature_[i][resolution_ - 2];
           break;
         // The diffusion equation!
         case FREE_AIR:

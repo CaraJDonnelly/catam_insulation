@@ -24,6 +24,9 @@ class InsulatedBox {
       UPPER_LEFT_CORNER,
       LOWER_RIGHT_CORNER,
       LOWER_LEFT_CORNER,
+      // Wraps around the j-walls.
+      PERIODIC_UPPER,
+      PERIODIC_LOWER,
       // Will be set to -DBL_MAX for ease of plotting.
       INSIDE_INSULATION,
       // Will relax under the diffusion equation.
